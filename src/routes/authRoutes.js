@@ -36,8 +36,8 @@ authRoutes.post('/register',(req,res)=>{
         res.sendStatus(503)
     }
 
-    res.sendStatus(201)
 })
+res.sendStatus(201)
 authRoutes.post('/login',(req,res)=>{
 })
 
