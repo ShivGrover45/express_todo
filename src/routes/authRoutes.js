@@ -30,6 +30,7 @@ authRoutes.post('/register',(req,res)=>{
 
             //create a token 
             const token=jwt.sign({id:result.lastInsertRowid},process.env.JWT_SECRET,{expires_in:'24h'})
+            res.json({token})
     }catch(err){
         console.log(err.message)
         res.sendStatus(503)
