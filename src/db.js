@@ -14,8 +14,8 @@ db.exec(`
     db.exec(`
         CREATE TABLE todos(
         id INTEGER,
-        user_id INTEGER
-        task TEXT,
+        user_id INTEGER,
+        tasks TEXT,
         completed BOOLEAN DEFAULT 0,
         FOREIGN KEY(user_id) REFERENCES users(id)
         )
