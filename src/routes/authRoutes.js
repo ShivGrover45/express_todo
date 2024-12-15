@@ -2,7 +2,6 @@ import express from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import db from '../db.js'
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry.js'
 const authRoutes=express.Router()
 
 authRoutes.post('/register',(req,res)=>{  
@@ -55,13 +54,16 @@ authRoutes.post('/login',(req,res)=>{
             if(!users){
                 return res.status(404).send({message:"User not found"})
             }
+            const passwordIsValid=bcrypt.compareSync(password,users.password)
+            if(!passwordIsValid){
+                return res.send(401).send({message:"Password Invalid"})
+            }
+            const token=jwt.sign({id:users.id},process.env.JWT_SECRET,{expiresIn:'24h'})
     }
     catch(err){
         console.log(err.message)
         res.sendStatus(503)
     }
-
-
 })
 
 export default authRoutes
