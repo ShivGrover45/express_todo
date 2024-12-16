@@ -21,7 +21,7 @@ authRoutes.post('/register',(req,res)=>{
         const result=insertUser.run(username,hashedPassword)
 
         //we got the user now we have a default todo for every user
-        const defaultTodo="Hello write your first todo"
+        const defaultTodo=`Hello Write your first todo`
         const insertTodo=db.prepare(`
             INSERT INTO todos (user_id,tasks)
             VALUES(?,?)
@@ -59,6 +59,7 @@ authRoutes.post('/login',(req,res)=>{
                 return res.send(401).send({message:"Password Invalid"})
             }
             const token=jwt.sign({id:users.id},process.env.JWT_SECRET,{expiresIn:'24h'})
+            res.json({token})
     }
     catch(err){
         console.log(err.message)
