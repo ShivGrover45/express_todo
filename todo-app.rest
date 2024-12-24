@@ -1,0 +1,31 @@
+### Fetch all todos using get
+GET http://localhost:8000/todos
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzM1MDY0MTk5LCJleHAiOjE3MzUxNTA1OTl9.FkHyoZ7mEkTS0rf_5PC9MHmo2QVTJcjz2Uq3WcalPP0
+###
+
+POST  http://localhost:8000/auth/register
+Content-Type: application/json
+
+{
+    "username": "shiv@123.com",
+    "password": "Shikha2003"
+}
+
+### creates a new todo using post (protected)
+POST http://localhost:8000/todos
+Authorization:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzM1MDY0MTk5LCJleHAiOjE3MzUxNTA1OTl9.FkHyoZ7mEkTS0rf_5PC9MHmo2QVTJcjz2Uq3WcalPP0
+Content-Type: application/json
+
+{
+   "tasks":"finish the project"
+}
+
+### update a todo using put (protected)
+PUT http://localhost:8000/todos/4
+Authorization:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzM1MDY0MTk5LCJleHAiOjE3MzUxNTA1OTl9.FkHyoZ7mEkTS0rf_5PC9MHmo2QVTJcjz2Uq3WcalPP0
+Content-Type: application/json
+
+{
+   "tasks":"finish the project",
+   "completed":"1"
+}
