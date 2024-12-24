@@ -2,69 +2,64 @@ import express from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import db from '../db.js'
-const authRoutes=express.Router()
 
-authRoutes.post('/register',(req,res)=>{  
-    const {username,password}=req.body
-    console.log(username,password)
+const router = express.Router()
 
-    //encrypting the password using bcrypt library
-    const hashedPassword=bcrypt.hashSync(password,6)
-    console.log(hashedPassword)
+// Register a new user endpoing /auth/register
+router.post('/register', (req, res) => {
+    const { username, password } = req.body
+    // save the username and an irreversibly encrypted password
 
-    //new user and password to the database
-    try{
-        const insertUser=db.prepare(`
-            INSERT INTO users (username,password)
-            VALUES(?,?)
-            `)
-        const result=insertUser.run(username,hashedPassword)
+    // encrypt the password
+    const hashedPassword = bcrypt.hashSync(password, 8)
 
-        //we got the user now we have a default todo for every user
-        const defaultTodo=`Hello Write your first todo`
-        const insertTodo=db.prepare(`
-            INSERT INTO todos (user_id,tasks)
-            VALUES(?,?)
-            `)
-            insertTodo.run(result.lastInsertRowid,defaultTodo)
+    // save the new user and hashed password to the db
+    try {
+        const insertUser = db.prepare(`INSERT INTO users (username, password) VALUES (?, ?)`)
+        const result = insertUser.run(username, hashedPassword)
 
-            //create a token 
-            const token=jwt.sign({id:result.lastInsertRowid},process.env.JWT_SECRET,{expiresIn:'24h'})
-            res.json({token})
-    }catch(err){
-        console.log(err.message)
-        res.sendStatus(503)
-    }
-})
-authRoutes.post('/login',(req,res)=>{
+        // now that we have a user, I want to add their first todo for them
+        const defaultTodo = `Hello :) Add your first todo!`
+        const insertTodo = db.prepare(`INSERT INTO todos (user_id, tasks) VALUES (?, ?)`)
+        insertTodo.run(result.lastInsertRowid, defaultTodo)
 
-    //we got the user and the password in the database 
-    //so now the user will again type the username and password and we will use the check the username in our database and its corresponding password
-    //since the password is encrypted during the time of registration so it will not be same as the user just entered 
-    //so we have to again encrypt the password and check after that
-
-    const {username,password}=req.body
-    
-    try{
-        const getUser=db.prepare(`
-            SELECT * FROM users WHERE username= ?
-            `)
-            const users=getUser.get(username)
-
-            if(!users){
-                return res.status(404).send({message:"User not found"})
-            }
-            const passwordIsValid=bcrypt.compareSync(password,users.password)
-            if(!passwordIsValid){
-                return res.send(401).send({message:"Password Invalid"})
-            }
-            const token=jwt.sign({id:users.id},process.env.JWT_SECRET,{expiresIn:'24h'})
-            res.json({token})
-    }
-    catch(err){
+        // create a token
+        const token = jwt.sign({ id: result.lastInsertRowid }, process.env.JWT_SECRET, { expiresIn: '24h' })
+        res.json({ token })
+    } catch (err) {
         console.log(err.message)
         res.sendStatus(503)
     }
 })
 
-export default authRoutes
+router.post('/login', (req, res) => {
+    // we get their email, and we look up the password associated with that email in the database
+    // but we get it back and see it's encrypted, which means that we cannot compare it to the one the user just used trying to login
+    // so what we can to do, is again, one way encrypt the password the user just entered
+
+    const { username, password } = req.body
+
+    try {
+        const getUser = db.prepare('SELECT * FROM users WHERE username = ?')
+        const user = getUser.get(username)
+
+        // if we cannot find a user associated with that username, return out from the function
+        if (!user) { return res.status(404).send({ message: "User not found" }) }
+
+        const passwordIsValid = bcrypt.compareSync(password, user.password)
+        // if the password does not match, return out of the function
+        if (!passwordIsValid) { return res.status(401).send({ message: "Invalid password" }) }
+        console.log(user)
+
+        // then we have a successful authentication
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' })
+        res.json({ token })
+    } catch (err) {
+        console.log(err.message)
+        res.sendStatus(503)
+    }
+
+})
+
+
+export default router

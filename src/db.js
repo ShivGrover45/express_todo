@@ -13,7 +13,7 @@ db.exec(`
 
     db.exec(`
         CREATE TABLE todos(
-        id INTEGER,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         tasks TEXT,
         completed BOOLEAN DEFAULT 0,
