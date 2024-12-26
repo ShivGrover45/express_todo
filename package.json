@@ -1,5 +1,5 @@
 {
-  "name": "backdb",
+  "name": "todo-list",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -12,9 +12,12 @@
   "license": "ISC",
   "description": "a todo application using express jwt authorization sqlite database ",
   "dependencies": {
+    "@prisma/client": "^6.1.0",
     "bcryptjs": "^2.4.3",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "pg": "^8.13.1",
+    "prisma": "^6.1.0"
   }
 }
