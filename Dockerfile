@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 
 #running the app
-CMD ["node",",/src/server.js"]
+CMD ["node","./src/server.js"]
