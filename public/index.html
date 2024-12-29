@@ -203,6 +203,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: emailVal, password: passVal })
                 })
+                console.log(response)
                 data = await response.json()
             } else {
                 // login an account
